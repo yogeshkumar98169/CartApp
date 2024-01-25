@@ -7,7 +7,6 @@ const appSettings = {
 const app = initializeApp(appSettings)
 const database = getDatabase(app)
 const shoppingListInDB = ref(database, "shoppingList")
-
 const inputFieldEl = document.getElementById("input-field");
 const addButtonEl = document.getElementById("add-button");
 const shoppingListEl = document.getElementById("shopping-list")
@@ -18,7 +17,12 @@ addButtonEl.addEventListener("click", function () {
     clearInputFieldEl()
     // updateItemsList(inputValue)   //!it is to update the value of the items when no fetching from database
 })
-
+inputFieldEl.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        addButtonEl.click();
+    }
+});
 onValue(shoppingListInDB, function (snapshot) {
     // console.log(snapshot.val())     //!one method to get
     // let itemsValue=Object.values(snapshot.val())
@@ -50,4 +54,8 @@ function updateItemsList(item) {
     let newEl = document.createElement("li")
     newEl.textContent = itemValue
     shoppingListEl.append(newEl)
+    newEl.addEventListener("dblclick", function () {
+        let exactLocationOfItemInDB = ref(database, `shoppingList/${itemID}`)
+        remove(exactLocationOfItemInDB)
+    })
 }
